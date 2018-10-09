@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+	<title>My geocode app</title>
+</head>
+<body>
+	<div class="container">
+		<h2>Enter Location:</h2>
+		<form id="location-form">	
+				<input type="text" id="location-input" class="form-control form-control-lg">
+					<br>	
+					<button type="submit" class="btn btn-primary btn-block">Submit</button>
+				</input>
+		</form>	
+		<div class="card-block" id="formatted-address"></div>
+		<div class="card-block" id="address-component">	</div>
+	</div>
+
+<script type="text/javascript">
+
+		var locationForm=document.getElementById('location-form');
+
+		locationForm.addEventListener('submit',geocode);
+
+	// geocode();
+	function geocode(e){
+		e.preventDefault();
+		var location=document.getElementById("location-input").value;
+		axios.get("https://us1.locationiq.com/v1/search.php",{
+			params:{
+				
+				key:"f00490b6443790",
+				q:location,
+				format:"json"
+			}
+		})
+		.then(function(response){
+			console.log(response);
+
+			var formatedAdress=response.data[0].display_name;
+			var formatedAdressOutput=`
+				<ul class="list-group">
+					<li class="list-group-item">${formatedAdress}</li>
+				</ul>
+			`;
+			addressComponent=response.data;
+			// console.log(addressComponent);
+			var addressComponentOutput='<ul class="list-group">';
+			for(var i=0;i<addressComponent.length;i++){
+				addressComponentOutput+=`
+					<li class="list-group-item"><strong>${addressComponent[i].display_name}</strong></li>
+				`;
+			}
+			addressComponentOutput+="</ul>"
+
+			document.getElementById('formatted-address').innerHTML =
+			formatedAdressOutput;
+			document.getElementById('address-component').innerHTML =
+			addressComponentOutput;
+
+
+		})
+		.catch(function (error){
+			console.log(error);
+		})
+	}
+</script>
+</body>
+</html>
